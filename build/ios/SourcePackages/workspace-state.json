@@ -1,0 +1,55 @@
+{
+  "object" : {
+    "artifacts" : [
+
+    ],
+    "dependencies" : [
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "flutterframework",
+          "kind" : "fileSystem",
+          "location" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/FlutterFramework",
+          "name" : "FlutterFramework"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/FlutterFramework"
+        },
+        "subpath" : "flutterframework"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "geolocator_apple-2.3.14",
+          "kind" : "fileSystem",
+          "location" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/geolocator_apple-2.3.14",
+          "name" : "geolocator_apple"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/geolocator_apple-2.3.14"
+        },
+        "subpath" : "geolocator_apple-2.3.14"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "package_info_plus-10.1.0",
+          "kind" : "fileSystem",
+          "location" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/package_info_plus-10.1.0",
+          "name" : "package_info_plus"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/package_info_plus-10.1.0"
+        },
+        "subpath" : "package_info_plus-10.1.0"
+      }
+    ],
+    "prebuilts" : [
+
+    ]
+  },
+  "version" : 7
+}
