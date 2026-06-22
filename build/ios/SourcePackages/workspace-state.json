@@ -45,6 +45,20 @@
           "path" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/package_info_plus-10.1.0"
         },
         "subpath" : "package_info_plus-10.1.0"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "shared_preferences_foundation-2.5.6",
+          "kind" : "fileSystem",
+          "location" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/shared_preferences_foundation-2.5.6",
+          "name" : "shared_preferences_foundation"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/shared_preferences_foundation-2.5.6"
+        },
+        "subpath" : "shared_preferences_foundation-2.5.6"
       }
     ],
     "prebuilts" : [

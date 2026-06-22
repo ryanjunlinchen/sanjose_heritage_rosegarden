@@ -1,0 +1,1 @@
+ /Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/.dart_tool/flutter_build/caa8c445a0b647d490c223b60645d909/native_assets.json: 

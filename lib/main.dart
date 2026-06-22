@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Added dependency to handle local physical storage persistence
 
 void main() {
   runApp(const RoseGardenApp());
@@ -19,7 +20,7 @@ class RoseGardenApp extends StatelessWidget {
           seedColor: const Color(0xFF2E7D32),
           primary: const Color(0xFF2E7D32),    // plant green
           secondary: const Color(0xFFE91E63),  // rose red
-          background: const Color(0xFFF5F7F5), // morning mist white
+          surface: const Color(0xFFF5F7F5),    // morning mist white (Mapped to surface for Material 3 uniformity)
         ),
         scaffoldBackgroundColor: const Color(0xFFF5F7F5),
       ),
@@ -44,6 +45,27 @@ class _HomeScreenState extends State<HomeScreen> {
   final double _targetLatitude = 37.3323;
   final double _targetLongitude = -121.9234;
   final double _allowedRadiusInMeters = 200.0; // allowed check-in radius (meters)
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedHours(); // Automatically pull saved hours from the disk when the screen initializes
+  }
+
+  // Reads the device's storage drive to restore the volunteer's historic hours
+  Future<void> _loadSavedHours() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      _volunteerHours = prefs.getInt('saved_volunteer_hours_key') ?? 0; // Fallback to 0 if it's the first time opening the app
+    });
+  }
+
+  // Commits the newly accumulated hour count directly onto physical device storage
+  Future<void> _saveHoursToDisk() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('saved_volunteer_hours_key', _volunteerHours);
+  }
 
   // Core functionality: Retrieve location and verify geofence
   Future<void> _handleCheckIn() async {
@@ -85,12 +107,17 @@ class _HomeScreenState extends State<HomeScreen> {
         _targetLongitude,
       );
 
+      if (!mounted) return;
+
       // 5. Determine whether inside garden
       setState(() {
         _isLoading = false;
         if (distanceInMeters <= _allowedRadiusInMeters) {
           _volunteerHours += 1;
           _statusMessage = "Check in successful! You are currently in the Rose Garden.";
+          
+          _saveHoursToDisk(); // Triggers storage operation right after confirming valid check-in
+          
           _showResultDialog(true, "Check in successful! ", "The distance between the garden is ${distanceInMeters.toStringAsFixed(1)} meters, your working time has been recorded. ");
         } else {
           _statusMessage = "Unable to check in：Outside garden boundaries.";
@@ -99,6 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
 
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _statusMessage = "Error";
@@ -120,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: success ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary
               ),
               const SizedBox(width: 10),
-              Text(title),
+              Expanded(child: Text(title)),
             ],
           ),
           content: Text(content),
@@ -154,8 +182,8 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                decoration: const BoxDecoration(
+                  color: Color(0x1A2E7D32), // Hardcoded 10% opacity primary green for broad Flutter SDK support
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -172,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                  side: const BorderSide(color: Color(0x332E7D32)), // Hardcoded 20% opacity primary green border
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -198,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                  side: const BorderSide(color: Color(0x332E7D32)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -225,9 +253,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       label: const Text('Verify GPS and Check In', style: TextStyle(fontSize: 16, color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.colorScheme.primary,
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                        elevation: 3,
+                        minimumSize: const Size(double.infinity, 54),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
             ],
