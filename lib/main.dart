@@ -37,7 +37,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _volunteerHours = 0;
+  int _volunteerHours = 0; // Handled as your Daily Volunteer Hours counter
+  int _allTimeHours = 0;   // Added state field to protect and store your permanent master running history
   bool _isLoading = false;
   String _statusMessage = "Ready";
 
@@ -56,15 +57,35 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadSavedHours() async {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
+
+    // Fetch historical data metrics from storage fields
+    int savedDailyHours = prefs.getInt('saved_volunteer_hours_key') ?? 0;
+    int savedAllTimeHours = prefs.getInt('saved_all_time_hours_key') ?? 0;
+    String? lastDateStr = prefs.getString('saved_last_check_in_date_key');
+
+    final now = DateTime.now();
+    final todayStr = "${now.year}-${now.month}-${now.day}"; // Unique string key representation of today's date
+
+    // Automated Midnight Checking Protocol: If the calendar date changes, reset the daily counter
+    if (lastDateStr != null && lastDateStr != todayStr) {
+      savedDailyHours = 0; // Wipe yesterday's daily record cleanly back to zero
+    }
+
     setState(() {
-      _volunteerHours = prefs.getInt('saved_volunteer_hours_key') ?? 0; // Fallback to 0 if it's the first time opening the app
+      _volunteerHours = savedDailyHours; // Fallback to 0 if it's the first time opening the app
+      _allTimeHours = savedAllTimeHours; // Restores master background counter metrics
     });
   }
 
   // Commits the newly accumulated hour count directly onto physical device storage
   Future<void> _saveHoursToDisk() async {
     final prefs = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final todayStr = "${now.year}-${now.month}-${now.day}";
+
     await prefs.setInt('saved_volunteer_hours_key', _volunteerHours);
+    await prefs.setInt('saved_all_time_hours_key', _allTimeHours); // Added persistent preservation for the grand history value
+    await prefs.setString('saved_last_check_in_date_key', todayStr); // Locks down the last active day calendar timestamp
   }
 
   // Core functionality: Retrieve location and verify geofence
@@ -114,6 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoading = false;
         if (distanceInMeters <= _allowedRadiusInMeters) {
           _volunteerHours += 1;
+          _allTimeHours += 1; // Safely increments permanent grand history total metrics simultaneously
           _statusMessage = "Check in successful! You are currently in the Rose Garden.";
           
           _saveHoursToDisk(); // Triggers storage operation right after confirming valid check-in
@@ -163,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  @override
+    @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
@@ -194,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 30),
              
-              // Status Card: System Notification
+              // Status Card: System Notification (Only one clean card kept)
               Card(
                 elevation: 0,
                 color: Colors.white,
@@ -220,45 +242,98 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Status Card: Volunteer Hours
+              // Status Card: Daily Volunteer Hours
               Card(
                 elevation: 0,
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: const BorderSide(color: Color(0x332E7D32)),
+                  side: const BorderSide(color: Color(0x332E7D32)), // Hardcoded 20% opacity primary green border
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
                     children: [
-                      Icon(Icons.stars, color: theme.colorScheme.secondary),
-                      const SizedBox(width: 12),
+                      const Text(
+                        'Today\'s Volunteer Hours',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 8),
                       Text(
-                        'My Volunteer Time: $_volunteerHours Hours',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                        '$_volunteerHours',
+                        style: TextStyle(
+                          fontSize: 48,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 50),
+              const SizedBox(height: 16),
 
-              // check in button 
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton.icon(
-                      onPressed: _handleCheckIn,
-                      icon: const Icon(Icons.gps_fixed, color: Colors.white),
-                      label: const Text('Verify GPS and Check In', style: TextStyle(fontSize: 16, color: Colors.white)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        minimumSize: const Size(double.infinity, 54),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+              // Status Card: Cumulative Master All-Time Hours
+              Card(
+                elevation: 0,
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: const BorderSide(color: Color(0x332E7D32)), // Hardcoded 20% opacity primary green border
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Grand Total Volunteer Hours',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '$_allTimeHours',
+                        style: TextStyle(
+                          fontSize: 48,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.secondary, // Stylized with rose red for card distinction
                         ),
                       ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+
+              // Action Button
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton.icon(
+                  onPressed: _isLoading ? null : _handleCheckIn,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: Colors.grey,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
+                  ),
+                  icon: _isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.5,
+                          ),
+                        )
+                      : const Icon(Icons.location_on),
+                  label: Text(
+                    _isLoading ? 'Checking In...' : 'Check In at Garden',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
