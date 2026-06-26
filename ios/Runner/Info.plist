@@ -2,6 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- 🚀 ADDED CAMERA PERMISSIONS BELOW -->
+    <key>NSCameraUsageDescription</key>
+    <string>This app requires camera access to scan rose leaves for organic disease diagnosis.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app requires photo library access to analyze saved rose photos.</string>
+    <!-- 🚀 END OF ADDED CAMERA PERMISSIONS -->
+
     <key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location permission to confirm whether you are checking in as a volunteer at San Jose Heritage Rose Garden</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

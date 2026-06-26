@@ -35,6 +35,20 @@
       {
         "basedOn" : null,
         "packageRef" : {
+          "identity" : "image_picker_ios-0.8.13+6",
+          "kind" : "fileSystem",
+          "location" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/image_picker_ios-0.8.13+6",
+          "name" : "image_picker_ios"
+        },
+        "state" : {
+          "name" : "fileSystem",
+          "path" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/image_picker_ios-0.8.13+6"
+        },
+        "subpath" : "image_picker_ios-0.8.13+6"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
           "identity" : "package_info_plus-10.1.0",
           "kind" : "fileSystem",
           "location" : "/Users/ryanchen/Development/SanJoseHeritageRoseGarden/sanjose_heritage_rosegarden/ios/Flutter/ephemeral/Packages/.packages/package_info_plus-10.1.0",
