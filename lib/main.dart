@@ -47,9 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _todayHoursController = TextEditingController();
 
   // San Jose Heritage Rose Garden real center coordinates
-  final double _targetLatitude = 37.3382;
-  final double _targetLongitude = -121.9026;
-  final double _allowedRadiusInMeters = 200.0; // allowed check-in radius (meters)
+  final double _targetLatitude = 37.34392;
+  final double _targetLongitude = -121.90729;
+  final double _allowedRadiusInMeters = 500.0; // allowed check-in radius (meters)
 
   @override
   void initState() {
