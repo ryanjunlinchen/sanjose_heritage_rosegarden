@@ -95,17 +95,21 @@ class _RoseDoctorPageState extends State<RoseDoctorPage> {
     try {
       // 1. Convert physical camera asset into base64 binary text blocks required by Web API schemas
       final List<int> imageBytes = await _imageFile!.readAsBytes();
-      final String base64Image = base64Encode(imageBytes);
+      final String base64Image = base64Encode(imageBytes).replaceAll(RegExp(r'\s+'), '');
 
       // 2. Map standard target URL rules according to Health assessment schemas
-      final Uri targetUrl = Uri.parse('https://plant.id');
+      //final Uri targetUrl = Uri.parse('https://api.plant.id/v3/identification');
+      final Uri targetUrl = Uri.parse('https://api.plant.id/v3/health_assessment?details=local_names,description,treatment,cause');
 
+      print("================= 1 =================");
       // 3. Assemble JSON multi-level layout payloads
       final Map<String, dynamic> payloadJson = {
-        "images": ["data:image/jpeg;base64,$base64Image"],
+        "images": [base64Image],
         "latitude": 37.3439,   // Feeds San Jose coordinates to assist region optimization
         "longitude": -121.9072, 
-        "language": "en",
+        "health": "only",
+        "disease_model" : "full",
+        //"disease_details": ["common_name", "description", "treatment", "cause"],
       };
 
       // 4. Dispatch live asynchronous POST call out across web data pipelines
@@ -113,30 +117,32 @@ class _RoseDoctorPageState extends State<RoseDoctorPage> {
         targetUrl,
         headers: {
           'Content-Type': 'application/json',
-          'Api-Key': _plantIdKey,
+          'api-key': _plantIdKey.trim(),
         },
         body: jsonEncode(payloadJson),
       );
+      print("================= 2 =================");
+      print("Response Body: ${networkResponse.body.toString()}");
 
       // 5. Deconstruct incoming structural system JSON trees safely
       if (networkResponse.statusCode == 200 || networkResponse.statusCode == 201) {
         final Map<String, dynamic> dataTree = jsonDecode(networkResponse.body);
         
         final Map<String, dynamic>? resultObj = dataTree['result'];
-        
-        if (resultObj != null && resultObj['is_healthy'] == false) {
+        if (resultObj != null && resultObj['is_healthy'] != null && resultObj['is_healthy']['binary'] == false) {
+          print("================= 3 =================");
           // Pull target diagnostic properties safely from structural dictionary matrices
           final List diseases = resultObj['disease']['suggestions'];
           final Map leadingDisease = diseases.first;
           
-          final String commonName = leadingDisease['name'] ?? "Unknown Affliction";
+          final String diseaseName = leadingDisease['name'] ?? "Unknown Affliction";
           final double probability = (leadingDisease['probability'] ?? 0.0) * 100;
           
           // Pull treatment details from third-party biological maps if accessible
           final Map? details = leadingDisease['details'];
           String careTips = "⚠️ NO CHEMICAL PESTICIDES ALLOWED IN SAN JOSE PUBLIC PARKS!\n\n";
-          
           if (details != null && details['treatment'] != null) {
+            print("================= 4 =================");
             final Map treatments = details['treatment'];
             // Dynamic biological processing checks map treatment strategies strings directly
             if (treatments.containsKey('biological')) {
@@ -150,7 +156,7 @@ class _RoseDoctorPageState extends State<RoseDoctorPage> {
           }
 
           setState(() {
-            _detectedIssue = "$commonName (${probability.toStringAsFixed(0)}% Confidence)";
+            _detectedIssue = "$diseaseName (${probability.toStringAsFixed(0)}% Confidence)";
             _organicTreatment = careTips;
             _isAnalyzing = false;
           });
@@ -159,9 +165,11 @@ class _RoseDoctorPageState extends State<RoseDoctorPage> {
             _detectedIssue = "Healthy Specimen Verified!";
             _organicTreatment = "Third-party assessment reports zero pathogen active traits or insect damage vectors.";
             _isAnalyzing = false;
+            print("================= 5 =================");
           });
         }
       } else {
+        print("================= 6 =================");
         throw "Server response returned fault code: ${networkResponse.statusCode}";
       }
 
