@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Handles local device memory storage persistence
 import '../features/volunteer_check_in/volunteer_check_in.dart';
-import '../features/rose_diagnosis/rose_doctor_page.dart'; // 🚀 ADDED: Imports your camera scanner screen module
-
+import '../features/rose_diagnosis/rose_doctor_page.dart'; 
+// 1. ADDED: Points to your main.dart file so this page can see the Weather Schedule Screen
+import '../main.dart'; 
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -22,7 +21,7 @@ class HomeScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(), // Dismisses keyboard on blank canvas tap
+        onTap: () => FocusScope.of(context).unfocus(), 
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -63,12 +62,38 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+
+                // 2. FIXED: Added a gap and placed the Weather Schedule button safely inside the layout layout
+                const SizedBox(height: 20),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.wb_sunny, color: Colors.white),
+                    label: const Text(
+                      'View Weather Schedule',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const FlowerScheduleScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
         ),
       ),
-    );
+    ); // The return statement safely ends here now
   }
-
 }
