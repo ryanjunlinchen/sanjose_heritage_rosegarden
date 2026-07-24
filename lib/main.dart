@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'rose_garden_app.dart';
-import 'weather_scheduler.dart';
-import 'weather_api_service.dart';
+import 'features/weather/weather_scheduler.dart';
+import 'features/weather/weather_api_service.dart';
 
 
 //import 'package:geolocator/geolocator.dart';

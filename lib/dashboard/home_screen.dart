@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../features/volunteer_check_in/volunteer_check_in.dart';
 import '../features/rose_diagnosis/rose_doctor_page.dart'; 
-import '../features/rose_garden_virtual_tour.dart';
-import '../features/rose_garden_map_tour.dart';
+import '../features/rose_garden_map/rose_garden_virtual_tour.dart';
+import '../features/rose_garden_map/rose_garden_map_tour.dart';
 import 'package:geolocator/geolocator.dart';//for gps check in system
 import 'package:shared_preferences/shared_preferences.dart'; //ai diagnosis
 import '../main.dart'; 
