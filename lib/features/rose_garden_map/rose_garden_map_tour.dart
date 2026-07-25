@@ -60,15 +60,53 @@ class _RoseGardenMapTourState extends State<RoseGardenMapTour> {
     // For now, this placeholder always passes "A1" when clicked
     print("Map tapped at: ${details.localPosition}");
     String detectedBedId = "A1"; 
+    String roseName = "Baronne Prévost";
+    String roseType = "Hybrid Perpetual • Deep Pink (1842)";
+
+    // ➕ ADD THIS LOGIC BLOCK RIGHT AFTER YOUR VARIABLE DECLARATIONS:
+
+// Fetch screen sizing measurements
+final double screenWidth = MediaQuery.of(context).size.width;
+final double screenHeight = MediaQuery.of(context).size.height;
+
+if (details.localPosition.dx < (screenWidth / 2)) {
+  // --- LEFT SIDE ---
+  if (details.localPosition.dy < (screenHeight / 2)) {
+    detectedBedId = "Bed A1";
+    roseName = "Baronne Prévost";
+    roseType = "Hybrid Perpetual • Deep Pink (1842)";
+  } else {
+    detectedBedId = "Bed A2";
+    roseName = "Souvenir de la Malmaison";
+    roseType = "Bourbon • Pale Pink (1843)";
+  }
+} else {
+  // --- RIGHT SIDE ---
+  if (details.localPosition.dy < (screenHeight / 2)) {
+    detectedBedId = "Bed B1";
+    roseName = "Cecile Brunner";
+    roseType = "Polyantha • Light Pink (1881)";
+  } else {
+    detectedBedId = "Bed B2";
+    roseName = "Mermaid";
+    roseType = "Hybrid Bracteata • Pale Yellow (1917)";
+  }
+}
+
 
     try {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (context) {
+          // 🛠️ UPDATE YOUR RETURN STATEMENT TO LOOK LIKE THIS:
+          return RoseDetailsSheet(
+            bedId: detectedBedId,
+            roseName: roseName,
+            roseType: roseType,
+          );
+
           // Debug Step 2: Check if the bottom sheet widget is building
-          print("Attempting to build RoseDetailsSheet...");
-          return RoseDetailsSheet(bedId: detectedBedId);
         },
       );
     } catch (e) {
@@ -80,7 +118,14 @@ class _RoseGardenMapTourState extends State<RoseGardenMapTour> {
 
 class RoseDetailsSheet extends StatelessWidget {
   final String bedId;
-  const RoseDetailsSheet({super.key, required this.bedId});
+  final String roseName; // ➕ Add this parameter line
+  final String roseType ; // ➕ Add this parameter line
+  const RoseDetailsSheet({
+  super.key, 
+  required this.bedId,
+  required this.roseName,
+  required this.roseType,
+});
 
   @override
   Widget build(BuildContext context) {
@@ -94,10 +139,10 @@ class RoseDetailsSheet extends StatelessWidget {
         children: [
           Text('Rose Bed $bedId', style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 10),
-          const ListTile(
-            title: Text('Baronne Prévost'),
-            subtitle: Text('Hybrid Perpetual • Deep Pink'),
-            leading: Icon(Icons.yard, color: Colors.pink),
+          ListTile(
+            title: Text(roseName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)), // 🚀 Use variable
+            subtitle: Text(roseType), // 🚀 Use variable
+            leading: const Icon(Icons.yard, color: Colors.pink, size: 30),
           ),
         ],
       ),
