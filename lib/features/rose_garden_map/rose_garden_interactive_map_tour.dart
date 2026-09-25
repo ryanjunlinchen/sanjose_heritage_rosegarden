@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// 1. 定义与 JSON 完全一致的玫瑰数据模型
+// 1. Define a Rose data model that is completely consistent with JSON
 class RoseModel {
     final String name;
     final String bedNumber;
@@ -67,7 +67,7 @@ class _RoseGardenInteractiveMapTourState extends State<RoseGardenInteractiveMapT
        debugPrint("init state ...");
        _roseDataFuture = _loadAndParseRoses();
 
-      // 监听地图缩放比例,用于性能优化(放大后才渲染密集打点)
+      // Listen to the map zoom level for performance optimization (only render dense markers after zooming in)
       _transformationController.addListener(() {
           setState(() {
               debugPrint("getMax scale ...");
@@ -76,7 +76,7 @@ class _RoseGardenInteractiveMapTourState extends State<RoseGardenInteractiveMapT
       });
   }
 
-  // 2. 异步读取解析你的 JSON 玫瑰表格资产
+  // 2. Asynchronously read and parse your JSON rose table assets
   Future<List<RoseModel>> _loadAndParseRoses() async {
       print("debug: initialize rose garden database...");
       final String jsonString = await rootBundle.loadString(
@@ -94,7 +94,7 @@ class _RoseGardenInteractiveMapTourState extends State<RoseGardenInteractiveMapT
       return _allRoses;
   }
 
-  // 3. 全局模糊搜索过滤过滤逻辑(支持名字和床号搜索)
+  // 3. Global fuzzy search filtering logic (supporting search by name and bed number)
   void _filterRoses(String query) {
       debugPrint("Filter rose ...");
       setState(() {
@@ -114,7 +114,7 @@ class _RoseGardenInteractiveMapTourState extends State<RoseGardenInteractiveMapT
   Widget build(BuildContext context) {
       return Scaffold(
           appBar: AppBar(
-              title: const Text('San Jose 玫瑰园云导览', style: TextStyle(fontWeight: FontWeight.bold,
+              title: const Text('San Jose Rose Garden Virtual Tour', style: TextStyle(fontWeight: FontWeight.bold,
               color: Colors.white)),
               backgroundColor: Colors.pink.shade400,
               elevation: 2,
@@ -126,18 +126,18 @@ class _RoseGardenInteractiveMapTourState extends State<RoseGardenInteractiveMapT
                       return const Center(child: CircularProgressIndicator(color: Colors.pink));
                   }
                   if (snapshot.hasError || !snapshot.hasData) {
-                      return const Center(child: Text('玫瑰园数据库资产加载失败,请检查路径。'));
+                      return const Center(child: Text('Database loading failed, please check the path.'));
                   }
 
                   return Column(
                       children: [
-                          // 🔍 顶层浮动搜索过滤栏
+                          // 🔍 Top Floating Search Filter Bar
                           Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: TextField(
                                   onChanged: _filterRoses,
                                   decoration: InputDecoration(
-                                      hintText: '搜索玫瑰品种或输入网格床号 (如 Arethusa, K-8-12)...',
+                                      hintText: 'Search for rose varieties or enter a grid bed number (e.g., Arethusa, K-8-12)...',
                                       prefixIcon: const Icon(Icons.search, color: Colors.pink),
                                       filled: true,
                                       fillColor: Colors.grey.shade100,
@@ -149,7 +149,7 @@ class _RoseGardenInteractiveMapTourState extends State<RoseGardenInteractiveMapT
                               ),
                           ),
 
-                          // ️ 主地图交互画布区域
+                          // ️ Main Map Interactive Canvas Area
                           Expanded(
                               child: LayoutBuilder(
                                   builder: (context, constraints) {
@@ -161,25 +161,25 @@ class _RoseGardenInteractiveMapTourState extends State<RoseGardenInteractiveMapT
                                         children: [
                                             InteractiveViewer(                                    
                                                 transformationController: _transformationController,
-                                                maxScale: 6.0, // 支持放大6倍看清密集的单株
+                                                maxScale: 6.0, // Supports 6x zoom to clearly see individual plants.
                                                 minScale: 1.0,
                                                 boundaryMargin: const EdgeInsets.all(20),
                                                 child: Stack(
                                                     children: [
-                                                        // 【底层】:你的 PNG 高清插画地图资产
+                                                        // High-definition illustrated PNG map assets
                                                         Image.asset(
                                                             'assets/images/sanjose_heritage_rose_garden.png',
                                                             width: constraints.maxWidth,
                                                             fit: BoxFit.contain,
                                                         ),
 
-                                                         // 【上层】:利用百分比坐标,将每朵花以🌳或🌹的组件钉在地图上
-                                                         // 【性能优化】:当全景地图未放大(Scale < 2.5)且数据密集时,隐藏单株打点,防止低配手机卡顿
+                                                         // [Upper Layer]: Use percentage coordinates to pin each flower onto the map as a 🌳 (tree) or 🌹 (rose) component
+                                                         // [Performance Optimization]: When the overview map is not zoomed in (Scale < 2.5) and data density is high, hide individual plant markers to prevent lag on low-end mobile devices
 
                                                         if (_currentScale >= 2.5 || _allRoses.length < 100)
                                                             ..._displayedRoses.map((rose) {
                                                             return Positioned(
-                                                                // 核心公式:相对坐标比例 × 当前容器实际像素宽高 = 精准像素位置
+                                                                // Relative Coordinate Ratio × Current Container's Actual Pixel Width/Height = Precise Pixel Position
                                                                 left: rose.dx * constraints.maxWidth - 12,
                                                                 top: rose.dy * constraints.maxHeight - 12,
                                                                 child: GestureDetector(
@@ -196,7 +196,7 @@ class _RoseGardenInteractiveMapTourState extends State<RoseGardenInteractiveMapT
                                                                             child: Icon(
                                                                                 rose.bedNumber.contains('Shed') ? Icons.home_work : Icons.yard,
                                                                                 color: rose.bedNumber.contains('Shed') ? Colors.teal : Colors.pinkAccent.shade200,
-                                                                                size: 22 / (_currentScale * 0.4).clamp(1.0, 2.0), // 随放大倍数动态微调图标大小,防止叠死
+                                                                                size: 22 / (_currentScale * 0.4).clamp(1.0, 2.0), // Dynamically tweak icon sizes based on zoom level to prevent overcrowding
                                                                             ),
                                                                         ),
                                                                     ),
@@ -243,7 +243,7 @@ class _RoseGardenInteractiveMapTourState extends State<RoseGardenInteractiveMapT
   }
 
 
-  // 4. 点击花朵时弹出的精美拟物化信息底层抽屉 (BottomSheet)
+  // 4. An elegant releastic information bottom drawer that pops up when a flower is clicked. (BottomSheet)
   void _showRoseBottomSheet(BuildContext context, RoseModel rose) {
       showModalBottomSheet(
           context: context,
@@ -280,18 +280,18 @@ class _RoseGardenInteractiveMapTourState extends State<RoseGardenInteractiveMapT
                           const SizedBox(height: 12),
                           Text(rose.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color:Colors.black87)),
                           const SizedBox(height: 8),
-                          Text('分类(Class): ${rose.roseClass}', style: const TextStyle(fontSize: 16, color:Colors.black54)),
+                          Text('Class: ${rose.roseClass}', style: const TextStyle(fontSize: 16, color:Colors.black54)),
                           const SizedBox(height: 4),
-                          Text('育种作者(Hybridist): ${rose.hybridist} (${rose.hybDate}年)', style: const TextStyle(fontSize: 16, color: Colors.black54)),
+                          Text('Hybridist: ${rose.hybridist} (${rose.hybDate}year)', style: const TextStyle(fontSize: 16, color: Colors.black54)),
                           const SizedBox(height: 16),
                           const Divider(),
                           const SizedBox(height: 12),
 
-                          // 如果这朵玫瑰有实地 Flickr 网址链接,显示看图互动按钮
+                          // If this rose has a real-world Flickr URL link, display the photo-interaction button.
                           if (rose.photoUrl.isNotEmpty)
                               ElevatedButton.icon(
                                   icon: const Icon(Icons.photo_library, color: Colors.white),
-                                  label: const Text('在线观赏真花花期大图 (Flickr)', style: TextStyle(color: Colors.white,fontSize: 16)),
+                                  label: const Text('View large photos of real flowers in bloom online (Flickr)', style: TextStyle(color: Colors.white,fontSize: 16)),
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.pink.shade400,
                                       minimumSize: const Size(double.infinity, 50),
@@ -309,7 +309,7 @@ class _RoseGardenInteractiveMapTourState extends State<RoseGardenInteractiveMapT
                                   width: double.infinity,
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
-                                  child: const Text('🏕️ 暂无该品种实地花期照片记录', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+                                  child: const Text('🏕️ There is currently no field photo record of this varietys blooming period', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
                               ),
                       ],
                   ),

@@ -153,7 +153,7 @@ class VolunteerCheckInPageState extends State<VolunteerCheckInPage> {
     }
   }
 
-  // 弹窗提示函数
+  // Alert Function 
   void _showResultDialog(bool success, String title, String content) {
     showDialog(
       context: context,

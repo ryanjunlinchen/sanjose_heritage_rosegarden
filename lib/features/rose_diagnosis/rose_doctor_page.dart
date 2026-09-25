@@ -174,12 +174,12 @@ class _RoseDoctorPageState extends State<RoseDoctorPage> {
       }
 
     } catch (networkFault, stackTrace) {
-      // 1. 在控制台打印完整的错误类型和堆栈信息 
+      // 1. Print the complete error type and stack trace in the console
       print("================= API ERROR ================="); 
       print("错误类型: ${networkFault.runtimeType}"); print("错误详情: $networkFault"); 
       print("堆栈轨迹:\n$stackTrace"); 
       print("============================================="); 
-      _showSnackBarInfo('网络请求异常: ${networkFault.toString().split('\n').first}'); 
+      _showSnackBarInfo('Network request exception: ${networkFault.toString().split('\n').first}'); 
       //_setFailState();
       setState(() {
         _isAnalyzing = false;
