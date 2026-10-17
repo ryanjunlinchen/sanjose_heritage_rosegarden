@@ -211,7 +211,7 @@ class VolunteerCheckInPageState extends State<VolunteerCheckInPage> {
                 Container(width: 1, height: 40, color: Colors.grey.shade300),
                 Column(
                   children: [
-                    const Text('Lifetime Hours', style: TextStyle(color: Colors.grey)),
+                    const Text('Total Volunteer Hours', style: TextStyle(color: Colors.grey)),
                     const SizedBox(height: 4),
                     Text('$_allTimeHours hrs',
                         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -228,7 +228,7 @@ class VolunteerCheckInPageState extends State<VolunteerCheckInPage> {
           controller: _todayHoursController,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
-            labelText: 'Hours worked today (defaults to 1)',
+            labelText: 'Tap hours worked today',
             prefixIcon: const Icon(Icons.access_time),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
@@ -251,7 +251,7 @@ class VolunteerCheckInPageState extends State<VolunteerCheckInPage> {
                   onPressed: _handleCheckIn,
                   icon: const Icon(Icons.gps_fixed, color: Colors.white),
                   label: const Text(
-                    'Verify GPS and Check In',
+                    'Volunteer Check In',
                     style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
